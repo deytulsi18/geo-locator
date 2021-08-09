@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
     <title>Geo Locator</title>
     <style>
         * {
@@ -23,11 +25,22 @@
         main {
             display: flex;
             justify-content: center;
-            flex-direction: column;
+            flex-direction: row;
             display: flex;
             margin-top: auto;
             margin-bottom: auto;
             min-height: 100vh;
+        }
+
+        .map-div {
+            margin: auto;
+        }
+
+        #mymap {
+            height: 32rem;
+            width: 40rem;
+            margin: 1.5rem;
+            border-radius: 10px;
         }
 
         .info-div {
@@ -78,6 +91,21 @@
             box-shadow: 4px 4px 20px #000;
         }
 
+        @media (max-width: 800px) {
+            main {
+                flex-direction: column;
+                padding-top: 1rem;
+            }
+
+            #mymap {
+                height: 32rem;
+                width: 90vw;
+                max-width: 20rem;
+                margin-right: auto;
+                margin-left: auto;
+            }
+        }
+
         @media (max-width: 300px) {
             body {
                 font-size: 1rem;
@@ -106,12 +134,6 @@
             <div class="geo-info">
                 <p>Postal: &nbsp;</p><span id="postal"></span>
             </div>
-            <!-- <div class="geo-info">
-                <p>Latitude: &nbsp;</p><span id="latitude"></span>
-            </div>
-            <div class="geo-info">
-                <p>Longitude: &nbsp;</p><span id="longitude"></span>
-            </div> -->
             <div class="geo-info">
                 <p>IP: &nbsp;</p><span id="ipv4"></span>
             </div>
@@ -122,6 +144,9 @@
                 <button id="getInfo">Get Info</button>
             </div>
         </section>
+        <div class="map-div">
+            <div id="mymap"></div>
+        </div>
     </main>
 
     <script>
@@ -130,26 +155,34 @@
         const state = document.getElementById('state');
         const city = document.getElementById('city');
         const postal = document.getElementById('postal');
-        // const latitude = document.getElementById('latitude');
-        // const longitude = document.getElementById('longitude');
         const ip = document.getElementById('ipv4');
         const status = document.querySelector('#status');
-
-        function callback(data) {
-            country.innerHTML = data.country_name;
-            state.innerHTML = data.state;
-            city.innerHTML = data.city;
-            postal.innerHTML = data.postal;
-            // latitude.innerHTML = data.latitude;
-            // longitude.innerHTML = data.longitude;
-            ip.innerHTML = data.IPv4;
-            status.textContent = 'Success!';
-            status.style.color = 'limegreen';
-        }
-
-
+        let mymap = L.map('mymap').setView([0, 0], 15);
 
         try {
+            function callback(data) {
+                country.innerHTML = data.country_name;
+                state.innerHTML = data.state;
+                city.innerHTML = data.city;
+                postal.innerHTML = data.postal;
+                ip.innerHTML = data.IPv4;
+                status.textContent = 'Success!';
+                status.style.color = 'limegreen';
+
+                // Making Map
+                if (mymap && mymap.remove) {
+                    mymap.off();
+                    mymap.remove();
+                }
+                mymap = L.map('mymap').setView([data.latitude, data.longitude], 15);
+                const attribution =
+                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+                const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+                const tiles = L.tileLayer(tileUrl, { attribution });
+                tiles.addTo(mymap);
+                const marker = L.marker([data.latitude, data.longitude]).addTo(mymap);
+            }
+
             document.querySelector("#getInfo").addEventListener("click", () => {
                 status.textContent = 'Locating…';
                 status.style.color = 'yellow';
