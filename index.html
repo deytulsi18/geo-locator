@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo Locator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #222;
+            color: #eee;
+            font-size: 1.25rem;
+            font-family: sans-serif;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            display: flex;
+            margin-top: auto;
+            margin-bottom: auto;
+            min-height: 100vh;
+        }
+
+        .info-div {
+            padding: 2rem;
+            margin: auto;
+            background-color: rgba(128, 128, 128, 0.75);
+            border-radius: 1rem;
+            width: 25rem;
+            max-width: 90%;
+            box-shadow: 1px 1px 30px #000;
+        }
+
+        .info-div h1 {
+            color: #333;
+            text-align: center;
+            padding-bottom: 1rem;
+        }
+
+        .info-div .geo-info {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .info-div .geo-info p {
+            color: #fff;
+        }
+
+        .info-div .geo-info span {
+            color: #000;
+        }
+
+        .button-div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            padding-top: 1rem;
+        }
+
+        button {
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem 1.5rem;
+            border-radius: 1rem;
+            border: none;
+            box-shadow: 4px 4px 20px #000;
+        }
+
+        @media (max-width: 300px) {
+            body {
+                font-size: 1rem;
+            }
+
+            button {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <section class="info-div">
+            <h1>Geo Locator</h1>
+            <div class="geo-info">
+                <p>Country: &nbsp;</p><span id="country"></span>
+            </div>
+            <div class="geo-info">
+                <p>State: &nbsp;</p><span id="state"></span>
+            </div>
+            <div class="geo-info">
+                <p>City: &nbsp;</p><span id="city"></span>
+            </div>
+            <div class="geo-info">
+                <p>Postal: &nbsp;</p><span id="postal"></span>
+            </div>
+            <!-- <div class="geo-info">
+                <p>Latitude: &nbsp;</p><span id="latitude"></span>
+            </div>
+            <div class="geo-info">
+                <p>Longitude: &nbsp;</p><span id="longitude"></span>
+            </div> -->
+            <div class="geo-info">
+                <p>IP: &nbsp;</p><span id="ipv4"></span>
+            </div>
+            <div class="geo-info">
+                <p>Status: &nbsp;</p><span id="status"></span>
+            </div>
+            <div class="button-div">
+                <button id="getInfo">Get Info</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+
+        const country = document.getElementById('country');
+        const state = document.getElementById('state');
+        const city = document.getElementById('city');
+        const postal = document.getElementById('postal');
+        // const latitude = document.getElementById('latitude');
+        // const longitude = document.getElementById('longitude');
+        const ip = document.getElementById('ipv4');
+        const status = document.querySelector('#status');
+
+        function callback(data) {
+            country.innerHTML = data.country_name;
+            state.innerHTML = data.state;
+            city.innerHTML = data.city;
+            postal.innerHTML = data.postal;
+            // latitude.innerHTML = data.latitude;
+            // longitude.innerHTML = data.longitude;
+            ip.innerHTML = data.IPv4;
+            status.textContent = 'Success!';
+            status.style.color = 'limegreen';
+        }
+
+
+
+        try {
+            document.querySelector("#getInfo").addEventListener("click", () => {
+                status.textContent = 'Locating…';
+                status.style.color = 'yellow';
+                let script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://geolocation-db.com/jsonp';
+                let h = document.querySelector('script');
+                h.parentNode.insertBefore(script, h);
+            });
+        }
+        catch (err) {
+            status.textContent = 'Failed!';
+            status.style.color = 'red';
+        }
+
+    </script>
+
+</body>
+
+</html>
